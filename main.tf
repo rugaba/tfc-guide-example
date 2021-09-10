@@ -18,9 +18,14 @@ data "aws_ami" "ubuntu" {
   owners = ["099720109477"] # Canonical
 }
 
+data "template_file" "userdata" {
+  template = file("install.sh")
+}
+
 resource "aws_instance" "ubuntu" {
   ami           = data.aws_ami.ubuntu.id
   instance_type = var.instance_type
+  user_data = data.template_file.userdata.rendered
 
   tags = {
     Name = var.instance_name
